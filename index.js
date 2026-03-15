@@ -188,9 +188,78 @@ module.exports = class Main {
 
         
     }
-    async upload(path, filepath, filename) {
-        const file_bytes = await get_file_size(filepath);
+    async copy(item_id,parentReference){
+        const res = await fetch(`/me/drive/items/{item-id}/copy`,{
+            method:"POST",
+            headers:{
+                "content-type":'application/json'
+            },
+            body:JSON.stringify({
+                /* 
+  "parentReference": {
+    "driveId": "6F7D00BF-FC4D-4E62-9769-6AEA81F3A21B",
+    "id": "DCD0D3AD-8989-4F23-A5A2-2C086050513F"
+  },
+  "name": "contoso plan (copy).txt" */
+            })}
+        );
+        console.log(await res.text())
     }
+    async mkdir(dirname){
+        const res = await fetch(`/me/drive/root/children`,{
+            method:"POST",
+            headers:{
+                "content-type":"application/json"
+            },
+            body:JSON.stringify({
+                /* {
+  "name": "New Folder",
+  "folder": { },
+  "@microsoft.graph.conflictBehavior": "rename"
+} */
+            })
+        });
+        console.log(await res.text());
+
+    }
+    async move(item_id,new_path_id,item_name){
+        const res = await fetch(`/me/drive/items/{item-id}`,{
+            method:"PATCH",
+            headers:{
+                "content-type":'application/json',
+            },
+            body:JSON.stringify({
+                "parentReference": {
+                    "id": item_id
+                },
+                "name": item_name
+                            })
+        });
+        console.log(await res.text());
+
+    }
+    async search(query){
+        const res = await fetch(`/me/drive/root/search(q='{search-query}')`,{
+            method:"GET",
+            headers:{
+                /* authorization here  */
+                // "content-type":
+            },
+        });
+        console.log(await res.text());
+    }
+    async delete(item_id){
+        const res  = await fetch(` /me/drive/items/{item-id}`,{
+            method:"DELETE",
+            headers:{
+                /* authotication here */
+            },
+
+        });
+        console.log(await res.text());
+        
+    }
+    async item_info(){}
     async download(path){
         const res = await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${path}:/content`,{
             method:"GET",
